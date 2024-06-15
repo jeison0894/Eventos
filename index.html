@@ -44,7 +44,7 @@
             event.preventDefault()
          })
 
-         ball.addEventListener('mousedown', (event) => {
+         ball.addEventListener('pointerdown', (event) => {
             let shiftX = event.clientX - ball.getBoundingClientRect().left
             let shiftY = event.clientY - ball.getBoundingClientRect().top
 
@@ -90,10 +90,10 @@
                }
             }
 
-            document.addEventListener('mousemove', onMouseMove)
+            document.addEventListener('pointermove', onMouseMove)
 
             ball.onmouseup = function () {
-               document.removeEventListener('mousemove', onMouseMove)
+               document.removeEventListener('pointermove', onMouseMove)
                ball.onmouseup = null
             }
 
