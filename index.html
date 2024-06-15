@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+      <style>
+         body {
+            max-width: 600px;
+            margin: auto;
+         }
+         .ball {
+            width: 100%;
+            border: 1px solid;
+            max-width: 100px;
+         }
+         .droppable {
+            width: 400px;
+            height: 500px;
+            border: 1px solid;
+            margin-top: 4rem;
+         }
+      </style>
+   </head>
+   <body>
+      <div>
+         <h1>Arrastar Soltar</h1>
+         <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore
+            libero accusamus ipsa distinctio. Necessitatibus molestias quam
+            ipsam, voluptatem accusamus blanditiis!
+         </p>
+         <img class="ball" src="./ball.png" alt="" />
+
+         <div class="droppable"></div>
+       <!--   <div style="display: flex; gap: 4rem;">
+            <div class="droppable"></div>
+         </div> -->
+      </div>
+      <script>
+         const ball = document.querySelector('.ball')
+
+         ball.addEventListener('dragstart', function (event) {
+            event.preventDefault()
+         })
+
+         ball.addEventListener('mousedown', (event) => {
+            let shiftX = event.clientX - ball.getBoundingClientRect().left
+            let shiftY = event.clientY - ball.getBoundingClientRect().top
+
+            ball.style.position = 'absolute'
+            ball.style.zIndex = 99999
+            document.body.prepend(ball)
+
+            function moveAt(pageX, pageY) {
+               ball.style.left = pageX - shiftX + 'px'
+               ball.style.top = pageY - shiftY + 'px'
+            }
+
+            moveAt(event.pageX, event.pageY)
+
+            // ----------------------------------
+
+            let currentDroppable = null
+
+            function onMouseMove(event) {
+
+               moveAt(event.pageX, event.pageY)
+
+               ball.hidden = true
+               let elemBelow = document.elementFromPoint(
+                  event.clientX,
+                  event.clientY
+               )
+               ball.hidden = false
+
+               if (!elemBelow) return
+
+               let droppableBelow = elemBelow.closest('.droppable')
+               console.log(droppableBelow);
+
+               if (currentDroppable != droppableBelow) {
+                  if (currentDroppable) {
+                     leaveDroppable(currentDroppable)
+                  }
+                  currentDroppable = droppableBelow
+                  if (currentDroppable) {
+                     enterDroppable(currentDroppable)
+                  }
+               }
+            }
+
+            document.addEventListener('mousemove', onMouseMove)
+
+            ball.onmouseup = function () {
+               document.removeEventListener('mousemove', onMouseMove)
+               ball.onmouseup = null
+            }
+
+            function enterDroppable(element) {
+               element.style.background = 'lightgreen' // Ejemplo de efecto visual
+            }
+
+            function leaveDroppable(element) {
+               element.style.background = '' // Eliminar el efecto visual
+            }
+         })
+      </script>
+   </body>
+</html>
