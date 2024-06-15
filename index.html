@@ -13,6 +13,7 @@
             width: 100%;
             border: 1px solid;
             max-width: 100px;
+            touch-action: none;
          }
          .droppable {
             width: 400px;
@@ -20,6 +21,8 @@
             border: 1px solid;
             margin-top: 4rem;
          }
+
+       
       </style>
    </head>
    <body>
@@ -33,18 +36,21 @@
          <img class="ball" src="./ball.png" alt="" />
 
          <div class="droppable"></div>
-       <!--   <div style="display: flex; gap: 4rem;">
+         <!--   <div style="display: flex; gap: 4rem;">
             <div class="droppable"></div>
          </div> -->
       </div>
+
       <script>
          const ball = document.querySelector('.ball')
 
-         ball.addEventListener('dragstart', function (event) {
+         function preventDefaultDrag(event) {
             event.preventDefault()
-         })
+         }
 
-         ball.addEventListener('pointerdown', (event) => {
+         function onPointerDown(event) {
+            event.preventDefault()
+
             let shiftX = event.clientX - ball.getBoundingClientRect().left
             let shiftY = event.clientY - ball.getBoundingClientRect().top
 
@@ -59,12 +65,9 @@
 
             moveAt(event.pageX, event.pageY)
 
-            // ----------------------------------
-
             let currentDroppable = null
 
-            function onMouseMove(event) {
-
+            function onPointerMove(event) {
                moveAt(event.pageX, event.pageY)
 
                ball.hidden = true
@@ -77,8 +80,6 @@
                if (!elemBelow) return
 
                let droppableBelow = elemBelow.closest('.droppable')
-               console.log(droppableBelow);
-
                if (currentDroppable != droppableBelow) {
                   if (currentDroppable) {
                      leaveDroppable(currentDroppable)
@@ -90,21 +91,25 @@
                }
             }
 
-            document.addEventListener('pointermove', onMouseMove)
-
-            ball.onmouseup = function () {
-               document.removeEventListener('pointermove', onMouseMove)
-               ball.onmouseup = null
+            function onPointerUp() {
+               document.removeEventListener('pointermove', onPointerMove)
+               document.removeEventListener('pointerup', onPointerUp)
             }
 
-            function enterDroppable(element) {
-               element.style.background = 'lightgreen' // Ejemplo de efecto visual
-            }
+            document.addEventListener('pointermove', onPointerMove)
+            document.addEventListener('pointerup', onPointerUp)
+         }
 
-            function leaveDroppable(element) {
-               element.style.background = '' // Eliminar el efecto visual
-            }
-         })
+         function enterDroppable(element) {
+            element.style.background = 'lightgreen'
+         }
+
+         function leaveDroppable(element) {
+            element.style.background = ''
+         }
+
+         ball.addEventListener('dragstart', preventDefaultDrag)
+         ball.addEventListener('pointerdown', onPointerDown)
       </script>
    </body>
 </html>
